@@ -6,6 +6,7 @@ import re
 
 def LigneCorrecte(ligne) :
   global VAR
+	global point
   if re.search('SetFactory("OpenCASCADE");', ligne):
     return True
   if re.search('//+', ligne):
@@ -13,23 +14,54 @@ def LigneCorrecte(ligne) :
   if re.search('.*=.*;', ligne):
     VAR.append(re.search('(.*)=.*', ligne)) 
     return True
-  if re.search('Point\(.*\) = \{ .*, .*, .*, 1.0\};', ligne):
-    m = re.search('Point\(.*\) = \{ (.*), (.*), (.*), 1.0\};', ligne)
-    for i in range(2):
-      if m.group(i) in VAR :
-        
-    
-    return True
+ 
+	if re.search('Point *\(.*\) *= *\{(.*, ){3} 1.0\};', ligne):
+		return True
+	
+	if re.search('Circle *\(.*\) *= *\{(.*, ){2}.*\};', ligne):
+		return True
+	
+	if re.search('Line *\(.*\) *= *\{.*, .*\};', ligne):
+		return True
+	
+	if re.search('Curve Loop *\(.*\) *= *\{(.*, )+ .*\};', ligne):
+		return True
 
-  p = re.search('Point',ligne)
-  l = re.search('Line', ligne)
-    
+  if re.search('Plane Surface *\(.*\) *= *\{(.*, )* .*\};', ligne):
+		return True
+		
+  if re.search('Ruled Surface *\(.*\) *= *\{(.*, )* .*\};', ligne):
+		return True
+		
+  if re.search('Physical Curve *\(.*\) *= *\{(.*, )* .*\};', ligne):
+		return True
+
+	if re.search('Physical Surface *\(.*\) *= *\{(.*, )* .*\};', ligne):
+		return True
+		
+  if re.search('Cylinder *\(.*\) *= *\{(.*, ){6,7} .*\};', ligne):
+		return True
+				
+  if re.search('Box *\(.*\) *= *\{(.*, ){5} .*\};', ligne):
+		return True
+				
+  if re.search('Physical Volume *\(.*\) *= *\{(.*, )* .*\};', ligne):
+		return True
+				
+  if re.search('Extrude *\{(.*, ){2}.*\} *\{Surface\{.*\};\}', ligne):
+		return True
+					
+  if re.search('BooleanUnion *(\{.*\{.*\}; .*; /}){2,}', ligne):
+		return True
+
+
 
 with open('Plongeoir.geo', 'r') as file:
 	lignes = file.readlines()
   
 cpt = 0
 VAR=[]
+point=[]
 
 for ligne in lignes :
   cpt += 1

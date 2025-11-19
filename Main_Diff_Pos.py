@@ -2,6 +2,7 @@ import os
 import subprocess
 import pandas as pd
 import numpy as np
+import re
 LARG=0.6
 Valeurs=pd.DataFrame({})
 val1=[]
@@ -12,15 +13,15 @@ with open("val_positions","r") as fichier :
     for ligne in fichier: 
         cpt+=1
         if cpt==1: # il faut qu'il y ait 3 variables, il ne vérifie pas la forme du fichier (ce qui peut tout faire capoter)
-            m=re.search('((.*)\\:){0,2}(.*)',ligne)
-            var1 = m.group(0)
-            var2 = m.group(1)
-            var3 = m.group(2)
+            m=re.search('(.*)\\:(.*)\\:(.*)',ligne)
+            var1 = m.group(1)
+            var2 = m.group(2)
+            var3 = m.group(3)
         else :
-            m=re.search('((.*)\\:){0,2}(.*)',ligne)
-            val1.append(m.group(0))
-            val2.append(m.group(1))    
-            val3.append(m.group(2))
+            m=re.search('(.*)\\:(.*)\\:(.*)',ligne)
+            val1.append(m.group(1))
+            val2.append(m.group(2))    
+            val3.append(m.group(3))
 Valeurs[var1]= val1
 Valeurs[var2]= val2
 Valeurs[var3]= val3

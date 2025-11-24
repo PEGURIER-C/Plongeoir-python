@@ -73,5 +73,5 @@ for ligne in lignes :
     if LigneCorrecte(ligne)==False : 
         print('la ligne numéro ' + str(cpt) + ' est fausse' )
 		break
-	d[cpt] = ligne
-print(d)
+	d.append(ligne)
+

@@ -46,10 +46,18 @@ def LigneCorrecte(ligne) :
     if re.search('Physical Volume *\\(.*\\) *= *\\{(.*, )* .*\\};', ligne):
         return True
 
-    if re.search('Extrude *\\{(.*, ){2}.*\\} *\\{Surface\\{.*\\};\\}', ligne):
+    if re.search('Extrude *\\{(.*, ){2}.*\\} *\\{ *Surface\\{.*\\}; *\\}', ligne):
+        return True
+	if re.search('Extrude *\\{(.*, ){2}.*\\} *\\{ *Point\\{.*\\}; *\\}', ligne):
+        return True
+    if re.search('Extrude *\\{(.*, ){2}.*\\} *\\{ *Curve\\{.*\\}; *\\}', ligne):
         return True
 
-    if re.search('BooleanUnion *(\\{.*\\{.*\\}; .*; \\}){2,}', ligne):
+    if re.search('BooleanUnion *( *\\{Volume\\{.*\\}; *Delete; *\\}){2,}', ligne):
+        return True
+    if re.search('BooleanUnion *( *\\{Curve\\{.*\\}; *Delete; *\\}){2,}', ligne):
+        return True
+    if re.search('BooleanUnion *( *\\{Surface\\{.*\\}; *Delete; *\\}){2,}', ligne):
         return True
     return False
 
@@ -59,7 +67,6 @@ with open('plongeoir.geo', 'r') as file:
   
 cpt = 0
 VAR=[]
-point=[]
 
 for ligne in lignes :
     cpt += 1

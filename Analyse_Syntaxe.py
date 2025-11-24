@@ -5,16 +5,14 @@ import numpy as np
 import re 
 
 def LigneCorrecte(ligne) :
-	
+    global VAR
     if re.search('SetFactory\\("OpenCASCADE"\\);', ligne):
         return True
-		
     if re.search('//+', ligne):
         return True
-		
     if re.search('.*=.*;', ligne):
+        VAR.append(re.search('(.*)=.*', ligne)) 
         return True
-		
     if re.search('Point *\\(.*\\) *= *\\{(.*, ){3} 1.0\\};', ligne):
         return True
     
@@ -47,20 +45,20 @@ def LigneCorrecte(ligne) :
 
     if re.search('Physical Volume *\\(.*\\) *= *\\{(.*, )* .*\\};', ligne):
         return True
-
+       
     if re.search('Extrude *\\{(.*, ){2}.*\\} *\\{ *Surface\\{.*\\}; *\\}', ligne):
         return True
-	if re.search('Extrude *\\{(.*, ){2}.*\\} *\\{ *Point\\{.*\\}; *\\}', ligne):
+    if re.search('Extrude *\\{(.*, ){2}.*\\} *\\{ *Point\\{.*\\}; *\\}', ligne):
         return True
     if re.search('Extrude *\\{(.*, ){2}.*\\} *\\{ *Curve\\{.*\\}; *\\}', ligne):
         return True
 
-    if re.search('BooleanUnion *( *\\{Volume\\{.*\\}; *Delete; *\\}){2,}', ligne):
+    if re.search('BooleanUnion *(\\{ *Volume\\{.*\\}; *Delete; *\\}){2,}', ligne):
         return True
-    if re.search('BooleanUnion *( *\\{Curve\\{.*\\}; *Delete; *\\}){2,}', ligne):
+    if re.search('BooleanUnion *(\\{ *Curve\\{.*\\}; *Delete; *\\}){2,}', ligne):
         return True
-	if re.search('BooleanUnion *( *\\{Surface\\{.*\\}; *Delete; *\\}){2,}', ligne):
-		return True
+    if re.search('BooleanUnion *(\\{ *Surface\\{.*\\}; *Delete; *\\}){2,}', ligne):
+        return True
     return False
 
 
@@ -68,13 +66,14 @@ with open('plongeoir.geo', 'r') as file:
 	lignes = file.readlines()
   
 cpt = 0
+VAR=[]
 geo = []
 condition = True
 for ligne in lignes :
     cpt += 1
     if LigneCorrecte(ligne)==False : 
         print('la ligne numéro ' + str(cpt) + ' est fausse' )
-		condition = False
-		break
-	geo.append(ligne)
-
+        condition = False
+        break
+    geo.append(ligne)
+print(geo)

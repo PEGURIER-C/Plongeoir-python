@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import re
 
-from Analyse_Syntaxe import geo
+from Analyse_Syntaxe import geo, condition
 
 Valeurs=pd.DataFrame({})
 val1=[]

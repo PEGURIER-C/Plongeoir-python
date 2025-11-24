@@ -6,13 +6,13 @@ import re
 
 from Analyse_Syntaxe import geo, condition
 
-Valeurs=pd.DataFrame({})
+Valeurs=[]
 val1=[]
 val2=[]
 val3=[]
 E= 0.01
 if condition : 
-    with open("val_positions","r") as fichier :
+    with open("val_positions.txt","r") as fichier :
         cpt=0
         for ligne in fichier: 
             cpt+=1
@@ -26,29 +26,29 @@ if condition :
                 val1.append(m.group(1))
                 val2.append(m.group(2))    
                 val3.append(m.group(3))
-    Valeurs[var1]= val1
-    Valeurs[var2]= val2
-    Valeurs[var3]= val3
+    Valeurs.append(val1)
+    Valeurs.append(val2)
+    Valeurs.append(val3)    
     
+
     res_fleche = []
     res_noeud = []
     df = pd.DataFrame({})
-    for j in len(Valeurs[0]):
+    for j in range(len(Valeurs[0])):
         #Changement du fichier .geo
-        with open("PlongTemp.geo", "w") as f_in, open("Plongeoir.geo", "r") as f_base:
-            for i in range(length(geo)):
-                if re.search("^"+str(var1),geo(i),re.IGNORECASE):
-                    contenu = str(var1)+"="+str(Valeur[0][j])+";\n"
+        with open("PlongTemp.geo", "w") as f_in :
+            for i in range(len(geo)):
+                if re.search("^"+str(var1),geo[i],re.IGNORECASE):
+                    contenu = str(var1)+"="+str(Valeurs[0][j])+";\n"
                     f_in.write(contenu)
-                if re.search("^"+str(var2),geo(i),re.IGNORECASE):
-                    contenu = str(var1)+"="+str(Valeur[1][j])+";\n"
+                elif re.search("^"+str(var2),geo[i],re.IGNORECASE):
+                    contenu = str(var2)+"="+str(Valeurs[1][j])+";\n"
                     f_in.write(contenu)
-                if re.search("^"+str(var3),geo(i),re.IGNORECASE):
-                    contenu = str(var1)+"="+str(Valeur[2][j])+";\n"
+                elif re.search("^"+str(var3),geo[i],re.IGNORECASE):
+                    contenu = str(var3)+"="+str(Valeurs[2][j])+";\n"
                     f_in.write(contenu)
                 else : 
-                    f_in.write(geo(i))
-##
+                    f_in.write(geo[i])    
         
     
         #Génération du maillage Gmsh
@@ -70,4 +70,4 @@ if condition :
     df.to_excel("resultats_castem_diff_pos.xlsx", index=False)
     
     print("Calculs terminés et résultats enregistrés dans resultats_castem_diff_pos.xlsx")
-##
+

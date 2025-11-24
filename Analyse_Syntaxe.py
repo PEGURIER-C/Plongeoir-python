@@ -67,8 +67,11 @@ with open('plongeoir.geo', 'r') as file:
   
 cpt = 0
 VAR=[]
-
+d = []
 for ligne in lignes :
     cpt += 1
     if LigneCorrecte(ligne)==False : 
         print('la ligne numéro ' + str(cpt) + ' est fausse' )
+		break
+	d[cpt] = ligne
+print(d)

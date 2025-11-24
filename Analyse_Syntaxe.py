@@ -69,10 +69,12 @@ with open('plongeoir.geo', 'r') as file:
   
 cpt = 0
 geo = []
+condition = True
 for ligne in lignes :
     cpt += 1
     if LigneCorrecte(ligne)==False : 
         print('la ligne numéro ' + str(cpt) + ' est fausse' )
+		condition = False
 		break
 	geo.append(ligne)
 

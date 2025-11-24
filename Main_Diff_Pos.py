@@ -33,15 +33,23 @@ if condition :
     res_fleche = []
     res_noeud = []
     df = pd.DataFrame({})
-    for val in Valeurs[var1]:
+    for j in len(Valeurs[0]):
         #Changement du fichier .geo
         with open("PlongTemp.geo", "w") as f_in, open("Plongeoir.geo", "r") as f_base:
             for i in range(length(geo)):
-                if re.search('^POS',geo(i)):
-                    contenu = "POS="+str(val)+";\n"
+                if re.search("^"+str(var1),geo(i),re.IGNORECASE):
+                    contenu = str(var1)+"="+str(Valeur[0][j])+";\n"
+                    f_in.write(contenu)
+                if re.search("^"+str(var2),geo(i),re.IGNORECASE):
+                    contenu = str(var1)+"="+str(Valeur[1][j])+";\n"
+                    f_in.write(contenu)
+                if re.search("^"+str(var3),geo(i),re.IGNORECASE):
+                    contenu = str(var1)+"="+str(Valeur[2][j])+";\n"
                     f_in.write(contenu)
                 else : 
                     f_in.write(geo(i))
+##
+        
     
         #Génération du maillage Gmsh
         commande_gmsh = ["gmsh", "-3", "PlongTemp.geo","-clmin", str(E),"-clmax", str(E),"-format" ,"unv" ,"-o", "plongeoir.unv"]
@@ -62,3 +70,4 @@ if condition :
     df.to_excel("resultats_castem_diff_pos.xlsx", index=False)
     
     print("Calculs terminés et résultats enregistrés dans resultats_castem_diff_pos.xlsx")
+##

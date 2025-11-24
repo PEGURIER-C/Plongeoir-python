@@ -5,14 +5,16 @@ import numpy as np
 import re 
 
 def LigneCorrecte(ligne) :
-    global VAR
+	
     if re.search('SetFactory\\("OpenCASCADE"\\);', ligne):
         return True
+		
     if re.search('//+', ligne):
         return True
+		
     if re.search('.*=.*;', ligne):
-        VAR.append(re.search('(.*)=.*', ligne)) 
         return True
+		
     if re.search('Point *\\(.*\\) *= *\\{(.*, ){3} 1.0\\};', ligne):
         return True
     

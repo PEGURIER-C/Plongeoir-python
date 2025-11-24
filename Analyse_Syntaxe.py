@@ -57,8 +57,8 @@ def LigneCorrecte(ligne) :
         return True
     if re.search('BooleanUnion *( *\\{Curve\\{.*\\}; *Delete; *\\}){2,}', ligne):
         return True
-    if re.search('BooleanUnion *( *\\{Surface\\{.*\\}; *Delete; *\\}){2,}', ligne):
-        return True
+	if re.search('BooleanUnion *( *\\{Surface\\{.*\\}; *Delete; *\\}){2,}', ligne):
+		return True
     return False
 
 
@@ -66,7 +66,6 @@ with open('plongeoir.geo', 'r') as file:
 	lignes = file.readlines()
   
 cpt = 0
-VAR=[]
 d = []
 for ligne in lignes :
     cpt += 1

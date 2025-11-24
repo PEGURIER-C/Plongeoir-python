@@ -10,6 +10,7 @@ Valeurs=pd.DataFrame({})
 val1=[]
 val2=[]
 val3=[]
+E= 0.01
 with open("val_positions","r") as fichier :
     cpt=0
     for ligne in fichier: 
@@ -34,9 +35,12 @@ df = pd.DataFrame({})
 for val in Valeurs[var1]:
     #Changement du fichier .geo
     with open("PlongTemp.geo", "w") as f_in, open("Plongeoir.geo", "r") as f_base:
-        contenu = f_base.read().replace("%"+str(var1)+"%", str(val))
-        f_in.write(contenu)
-    E=0.01
+        for i in range(length(geo)):
+            if re.search('^POS',geo(i)):
+                contenu = "POS="+str(val)+";\n"
+                f_in.write(contenu)
+            else : 
+                f_in.write(geo(i))
 
     #Génération du maillage Gmsh
     commande_gmsh = ["gmsh", "-3", "PlongTemp.geo","-clmin", str(E),"-clmax", str(E),"-format" ,"unv" ,"-o", "plongeoir.unv"]
@@ -49,7 +53,6 @@ for val in Valeurs[var1]:
     with open("resultat.txt", "r") as f_res:
         fleche, noeud = map(float, f_res.read().split())
         res_fleche.append(fleche)
-        res_noeud.append(noeud)
 
 #Enregistrement dans Excel
 

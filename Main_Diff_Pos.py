@@ -3,7 +3,9 @@ import subprocess
 import pandas as pd
 import numpy as np
 import re
-LARG=0.6
+
+from Analyse_Syntaxe import geo
+
 Valeurs=pd.DataFrame({})
 val1=[]
 val2=[]
@@ -26,15 +28,13 @@ Valeurs[var1]= val1
 Valeurs[var2]= val2
 Valeurs[var3]= val3
 
-positions=np.array([0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95])
-positions = positions*LARG
 res_fleche = []
 res_noeud = []
 df = pd.DataFrame({})
-for pos in positions:
+for val in Valeurs[var1]:
     #Changement du fichier .geo
     with open("PlongTemp.geo", "w") as f_in, open("Plongeoir.geo", "r") as f_base:
-        contenu = f_base.read().replace("%POS%", str(pos))
+        contenu = f_base.read().replace("%"+str(var1)+"%", str(val))
         f_in.write(contenu)
     E=0.01
 
@@ -51,7 +51,7 @@ for pos in positions:
         res_fleche.append(fleche)
         res_noeud.append(noeud)
 
-# 3️⃣ Enregistrement dans Excel
+#Enregistrement dans Excel
 
 df["fleche"]= res_fleche
 df["position"]= positions

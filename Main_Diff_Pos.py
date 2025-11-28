@@ -53,20 +53,22 @@ if condition :
     
         #Génération du maillage Gmsh
         commande_gmsh = ["gmsh", "-3", "PlongTemp.geo","-clmin", str(E),"-clmax", str(E),"-format" ,"unv" ,"-o", "plongeoir.unv"]
-    subprocess.run(commande_gmsh, check=True)
-    
-    #Exécution de Cast3M
-    subprocess.run([r"C:\Cast3M\PCW_25\bin\castem25.bat", "Plongeoir.dgibi"], check=True)
+        subprocess.run(commande_gmsh, check=True)
         
-    #Lecture du résultat
-    with open("resultat.txt", "r") as f_res:
-        fleche, noeud = map(float, f_res.read().split())
-        res_fleche.append(fleche)
+        #Exécution de Cast3M
+        subprocess.run([r"C:\Cast3M\PCW_25\bin\castem25.bat", "Plongeoir.dgibi"], check=True)
+            
+        #Lecture du résultat
+        with open("resultat.txt", "r") as f_res:
+            fleche, noeud = map(float, f_res.read().split())
+            res_fleche.append(fleche)
 
     #Enregistrement dans Excel
     
+    df[var1]= Valeurs[0]
+    df[var2]= Valeurs[1]
+    df[var3]= Valeurs[2]
     df["fleche"]= res_fleche
-    df["position"]= positions
     df.to_excel("resultats_castem_diff_pos.xlsx", index=False)
     
     print("Calculs terminés et résultats enregistrés dans resultats_castem_diff_pos.xlsx")

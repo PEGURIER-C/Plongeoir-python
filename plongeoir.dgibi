@@ -1,0 +1,99 @@
+*
+* DEBUT DU FICHIER .DGIBI
+*
+
+TITR 'PLONGEOIR' ;    
+OPTI DIME 3 ELEM TET4 ; 
+OPTI ECHO 1;
+OPTI TRAC OPEN ;
+
+***************************************
+* PARAMETRISATION, DONNEES
+***************************************
+YOUNG = 3.E9 ;
+COEFPOIS = 0.2 ;
+
+***************************************
+* GEOMETRIE
+***************************************
+TAB1 = LIRE 'UNV' 'PLONGEOIR.UNV';
+
+VOLT = (TAB1.'VOLT') ;
+SUPPORT = (TAB1.'SUPPORT') ;
+SOCLE = (TAB1.'SOCLE') ;
+
+*TRAC CACH VOLT;
+
+
+***************************************
+* MODELE ET MATERIAU
+***************************************
+
+MOD1 = MODE VOLT MECANIQUE ELASTIQUE ISOTROPE;
+MAT1 = MATE MOD1 YOUN YOUNG NU COEFPOIS RHO MASVOL;
+
+***************************************
+* CONDITIONS AUX LIMITES ET CHARGEMENT
+***************************************
+
+CL1 = BLOQ DEPLA SUPPORT ;
+CL2 = BLOQ UZ SOCLE ;
+CLT= CL1 ET CL2;
+
+* CHARGEMENT
+* ----------
+
+LONG = 3.;
+EPAIS= 0.05;
+*CLF = VOLT POINT DROI ((LONG) -1. EPAIS) ((LONG) +1. EPAIS) 1e-4;
+CLF1 = VOLT POINT PLAN (0. 0. EPAIS) (1. 0. EPAIS) (0. 1. EPAIS) 1e-4;
+CLF = CLF1 POINT  DROI ((0.7*LONG) -1. EPAIS) ((0.7*LONG) +1. EPAIS) (0.1*LONG);
+FORT = FORCER CLF FZ -1000. ; 
+   
+VEC1 = VECT FORT 0.5E-1 FX FY FZ ROUG; 
+*TRAC VEC1 CACH  VOLT;     
+
+*OPTI DONN 5;
+
+* MATRICE DE RIGIDITE
+* -------------------
+
+RIG1 = RIGI MOD1 MAT1;
+RIG1 = RIG1 ET CLT;
+
+***************************************
+* RESOLUTION
+***************************************
+
+DEPL1 = RESO RIG1 FORT;
+
+***************************************
+* POST TRAITEMENT
+***************************************
+
+* VISUALISATION DE LA DEFORMEE
+* ----------------------------
+
+DEF0 = DEFO VOLT DEPL1 0. BLAN;
+DEF1 = DEFO VOLT DEPL1  BLEU;
+*TRAC (DEF0 ET DEF1) ;
+*TRAC CACH (DEF1) ;
+
+* VISUALISATION DE LA CONTRAINTE DE VON MISES
+* -------------------------------------------
+SS   = SIGM MOD1 MAT1 DEPL1;
+SSVM = VMIS MOD1 SS;
+*TRAC DEF1 MOD1 SSVM;
+
+
+* RESULTATS
+* ---------
+FLECH = EXCO UZ DEPL1;
+FLECHMAX = (MAXI (ABS FLECH));
+
+NOEUD = NBNO VOLT;
+OPTI 'SORT' 'resultat.txt';
+SORT 'CHAI' FLECHMAX ;   
+
+FIN;
+QUIT;

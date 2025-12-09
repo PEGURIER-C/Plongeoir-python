@@ -1,75 +1,63 @@
-import os
 import subprocess
-import pandas as pd
-import numpy as np
 import re
 
 from Analyse_Syntaxe import geo, condition
+Nb_Parralèle = 4 
 
-Valeurs=[]
-val1=[]
-val2=[]
-val3=[]
-E= 0.01
+E= 0.05
 if condition : 
     with open("val_positions.txt","r") as fichier :
         cpt=0
-        for ligne in fichier: 
+        lignes = fichier.readlines()
+        for ligne in lignes: 
             cpt+=1
-            if cpt==1: # il faut qu'il y ait 3 variables, il ne vérifie pas la forme du fichier (ce qui peut tout faire capoter)
-                m=re.search('(.*)\\:(.*)\\:(.*)',ligne)
-                var1 = m.group(1)
-                var2 = m.group(2)
-                var3 = m.group(3)
+            if cpt==1: 
+                var= re.findall(r'[^:\\\n]+', ligne) # on récupère les variables dans une liste grace a findall.
+                Valeurs=[]
+                for i in range(len(var)):
+                    Valeurs.append([]) # on initialise une liste de liste pour stocker les valeurs
+
             else :
-                m=re.search('(.*)\\:(.*)\\:(.*)',ligne)
-                val1.append(m.group(1))
-                val2.append(m.group(2))    
-                val3.append(m.group(3))
-    Valeurs.append(val1)
-    Valeurs.append(val2)
-    Valeurs.append(val3)    
-    
+                m=re.findall(r'[^:\\\n]+',ligne)
+                for i in range(len(m)):
+                    Valeurs[i].append(m[i]) # on remplit les listes de valeurs correspondantes
 
     res_fleche = []
-    res_noeud = []
-    df = pd.DataFrame({})
     for j in range(len(Valeurs[0])):
         #Changement du fichier .geo
         with open("PlongTemp.geo", "w") as f_in :
-            for i in range(len(geo)):
-                if re.search("^"+str(var1),geo[i],re.IGNORECASE):
-                    contenu = str(var1)+"="+str(Valeurs[0][j])+";\n"
-                    f_in.write(contenu)
-                elif re.search("^"+str(var2),geo[i],re.IGNORECASE):
-                    contenu = str(var2)+"="+str(Valeurs[1][j])+";\n"
-                    f_in.write(contenu)
-                elif re.search("^"+str(var3),geo[i],re.IGNORECASE):
-                    contenu = str(var3)+"="+str(Valeurs[2][j])+";\n"
-                    f_in.write(contenu)
-                else : 
-                    f_in.write(geo[i])    
+            for i in geo:
+                Trouvé = False
+                for k in range(len(var)):
+                    if re.search("^"+str(var[k]),i):# cherche si la ligne commence par la variable
+                        contenu = str(var[k])+"="+str(Valeurs[k][j])+";\n"
+                        f_in.write(contenu)
+                        Trouvé = True
+                if not Trouvé : 
+                    f_in.write(i)    
         
     
         #Génération du maillage Gmsh
         commande_gmsh = ["gmsh", "-3", "PlongTemp.geo","-clmin", str(E),"-clmax", str(E),"-format" ,"unv" ,"-o", "plongeoir.unv"]
-        subprocess.run(commande_gmsh, check=True)
-        
+        subprocess.run(commande_gmsh, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print("Maillage Gmsh généré pour les positions : ", [Valeurs[i][j] for i in range(len(var))])
+
         #Exécution de Cast3M
-        subprocess.run([r"C:\Cast3M\PCW_25\bin\castem25.bat", "Plongeoir.dgibi"], check=True)
-            
+        subprocess.run([r"C:\Cast3M\PCW_25\bin\castem25.bat", "Plongeoir.dgibi"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print("Calcul Cast3M effectué pour les positions : ", [Valeurs[i][j] for i in range(len(var))])
+
         #Lecture du résultat
         with open("resultat.txt", "r") as f_res:
-            fleche, noeud = map(float, f_res.read().split())
-            res_fleche.append(fleche)
+            fleche= re.findall(r'[^ ]+',f_res.read())
+            res_fleche.append(float(fleche[0]))
+            print("Flèche maximale obtenue : ", fleche[0])
 
-    #Enregistrement dans Excel
-    
-    df[var1]= Valeurs[0]
-    df[var2]= Valeurs[1]
-    df[var3]= Valeurs[2]
-    df["fleche"]= res_fleche
-    df.to_excel("resultats_castem_diff_pos.xlsx", index=False)
-    
-    print("Calculs terminés et résultats enregistrés dans resultats_castem_diff_pos.xlsx")
-
+    #Affichage de la position optimale
+    flechemin  = min(res_fleche)
+    indice = 0
+    for k in range (len(res_fleche)):
+        if flechemin == res_fleche[k]:
+            indice = k
+            break
+    print(flechemin)
+    print("La flèche minimale est de ", flechemin, " pour les positions : ", [Valeurs[i][indice] for i in range(len(var))])

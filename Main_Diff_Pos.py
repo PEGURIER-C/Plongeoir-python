@@ -41,9 +41,22 @@ if condition :
         commande_gmsh = ["gmsh", "-3", "PlongTemp.geo","-clmin", str(E),"-clmax", str(E),"-format" ,"unv" ,"-o", "plongeoir.unv"]
         subprocess.run(commande_gmsh, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         print("Maillage Gmsh généré pour les positions : ", [Valeurs[i][j] for i in range(len(var))])
-
+        
+        #Préparation du fichier .dgibi
+        with open("PlongTemp.dgibi", "w") as f_in:
+            with open('plongeoir.dgibi', 'r') as file:
+                lignes = file.readlines()
+                for i in lignes:
+                    Trouvé = False
+                    for k in range(len(var)):
+                        if re.search("^"+str(var[k]),i):# cherche si la ligne commence par la variable
+                            contenu = str(var[k])+"="+str(Valeurs[k][j])+";\n"
+                            f_in.write(contenu)
+                            Trouvé = True
+                    if not Trouvé : 
+                        f_in.write(i)    
         #Exécution de Cast3M
-        subprocess.run([r"C:\Cast3M\PCW_25\bin\castem25.bat", "Plongeoir.dgibi"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run([r"C:\Cast3M\PCW_25\bin\castem25.bat", "PlongTemp.dgibi"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         print("Calcul Cast3M effectué pour les positions : ", [Valeurs[i][j] for i in range(len(var))])
 
         #Lecture du résultat

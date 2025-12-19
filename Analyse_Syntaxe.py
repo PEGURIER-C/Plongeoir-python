@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import re 
 
 def LigneCorrecte(ligne) :
@@ -89,9 +91,8 @@ def LigneCorrecte(ligne) :
         return True
     return False
 
-    
-    
-with open('plongeoir.geo', 'r') as file:
+from Path import geoPath   
+with open(geoPath ,'r') as file:
 	lignes = file.readlines()
   
 

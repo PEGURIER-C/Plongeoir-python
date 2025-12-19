@@ -1,8 +1,10 @@
+#!/usr/bin/python3
+
 import subprocess
 import re
 
 from Analyse_Syntaxe import geo, condition
-Nb_Parralèle = 4 
+from Path import dgibiPath
 
 E= 0.05
 if condition : 
@@ -44,7 +46,7 @@ if condition :
         
         #Préparation du fichier .dgibi
         with open("PlongTemp.dgibi", "w") as f_in:
-            with open('plongeoir.dgibi', 'r') as file:
+            with open(dgibiPath, 'r') as file:
                 lignes = file.readlines()
                 for i in lignes:
                     Trouvé = False
@@ -56,7 +58,7 @@ if condition :
                     if not Trouvé : 
                         f_in.write(i)    
         #Exécution de Cast3M
-        subprocess.run([r"C:\Cast3M\PCW_25\bin\castem25.bat", "PlongTemp.dgibi"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["castem24", "PlongTemp.dgibi"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         print("Calcul Cast3M effectué pour les positions : ", [Valeurs[i][j] for i in range(len(var))])
 
         #Lecture du résultat

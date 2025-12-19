@@ -1,10 +1,11 @@
-Plongeoir-python
-Sacha et Clément
+Titre du projet : Plongeoir-python 
+Auteur : Sacha et Clément
 
-Fichier Val_postions : Créer un fichier texte avec toutes les valeurs des n variables. Ce fichier doit, en première ligne, comporter les noms des variables en majuscules séparés par ":" tel que : "POS:LB:LH" pour 3 variables. Dans ce même fichier, les valeurs à utiliser doivent être en colonne en dessous des noms de variable et toujours séparés par ":" tel que : "0.03:0.06:0.6" pour 3 variables.
 
-Fichier .geo : Ce fichier doit avoir une bonne syntaxe. Si la syntaxe est mauvaise, le programme vous renverra la ligne qui fait défaut. De plus, le nom des variables doit être en majuscule dans le fichier. Enfin, la commande "extrude" est écrite par gmsh sur Trois ligne, pour que le programme marche il vous suffit d'enlever les retour a la ligne, en laissant les espaces.
+Fichier .geo : Ce fichier doit avoir une bonne syntaxe. Si la syntaxe est mauvaise, le programme vous renverra la ligne qui fait défaut. Enfin, la commande "extrude" est écrite par défaut pdans gmsh sur trois lignes, pour que le programme marche il vous suffit d'enlever les retour à la ligne, en laissant les espaces dans le script du fichier .geo.
 
-Fichier .dgibi : Il ne pas contenir une valeur attribuée à une  
+Fichier .dgibi : Le fichier dgibi doit, à la fin du calcul, écrire la flèche maximale dans un fichier se nommant "resultat.txt".
 
-Mettre le fichier de valeurs, le .geo et le .dgibi dans le même dossier et lancer le Main.py dans mico24. Ce code vous permettra de réaliser une optimisation paramétrique de votre problème.
+Fichier Path.py : A l'intérieur de ce programme, écrire le chemin du fichier .dgibi ainsi que celui de son fichier .geo associé.
+
+Mettre le fichier .geo et le .dgibi dans le même dossier que generate_positions.py, Analyse_Syntaxe.py, Main.py et Path.py. Exécuter le Main.py (./Main.py) dans mico24 vous permettra de réaliser une optimisation paramétrique de votre problème pour obtenir une valeur minimale de la flèche.
